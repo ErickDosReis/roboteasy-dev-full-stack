@@ -1,8 +1,10 @@
-﻿using ChatApp.Context;
+﻿using System.Security.Claims;
+using ChatApp.Context;
 using ChatApp.DTOs;
 using ChatApp.Interfaces;
 using ChatApp.Models;
 using ChatApp.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ChatApp.Services;
 
@@ -27,5 +29,10 @@ public sealed class ChatMessageService(IChatMessageRepository repo) : IChatMessa
 
         await _repo.AddAsync(entity, ct);
         await _repo.SaveChangesAsync(ct);
+    }
+
+    public async Task<IEnumerable<ChatMessage>> GetConversationHistoryAsync(string currentUserId, string targetUserId, CancellationToken ct)
+    {
+        return await _repo.GetConversationAsync(currentUserId, targetUserId, ct);
     }
 }

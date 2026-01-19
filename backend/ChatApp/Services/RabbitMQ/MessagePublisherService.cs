@@ -11,9 +11,12 @@ namespace ChatApp.Services.RabbitMQ
         private readonly RabbitMqOptions _opt;
         private readonly IConnection _conn;
         private readonly IModel _ch;
+        private readonly ILogger _logger;
 
-        public MessagePublisherService(IOptions<RabbitMqOptions> options)
+        public MessagePublisherService(ILogger<MessagePublisherService> logger, IOptions<RabbitMqOptions> options)
         {
+            _logger = logger;
+
             _opt = options.Value;
 
             var factory = new ConnectionFactory
@@ -35,20 +38,27 @@ namespace ChatApp.Services.RabbitMQ
 
         public Task PublishAsync(ChatMessageCreatedDto message, CancellationToken ct = default)
         {
-            var json = JsonSerializer.Serialize(message);
-            var body = Encoding.UTF8.GetBytes(json);
+            try
+            {
+                var json = JsonSerializer.Serialize(message);
+                var body = Encoding.UTF8.GetBytes(json);
 
-            var props = _ch.CreateBasicProperties();
-            props.ContentType = "application/json";
-            props.DeliveryMode = 2; // persistente
+                var props = _ch.CreateBasicProperties();
+                props.ContentType = "application/json";
+                props.DeliveryMode = 2; // persistente
 
-            _ch.BasicPublish(
-                exchange: _opt.Exchange,
-                routingKey: _opt.RoutingKey,    
-                basicProperties: props,
-                body: body
-            );
+                _ch.BasicPublish(
+                    exchange: _opt.Exchange,
+                    routingKey: _opt.RoutingKey,
+                    basicProperties: props,
+                    body: body
+                );
 
+            }
+            catch(Exception e)
+            {
+                _logger.LogError($"Erro ao publicar mensagem no RabbitMQ: {e}");
+            }
             return Task.CompletedTask;
         }
 
