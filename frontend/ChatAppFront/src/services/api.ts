@@ -31,7 +31,6 @@ function setAxiosAuthInterceptor(instance: AxiosInstance) {
         }
         config.headers = config.headers ?? {}
 
-        console.log('Adicionando Authorization Header com Bearer token', `Bearer ${token}`)
         config.headers.Authorization = `Bearer ${token}`
       }
 
