@@ -27,6 +27,11 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 5s
+      retries: 20
 
   backend-api:
     build:
@@ -37,25 +42,31 @@ services:
       - "5000:8080"
     environment:
       ASPNETCORE_URLS: http://+:8080
-
-      # Npgsql (dentro do Docker: use Host=postgres-db)
+      # Npgsql
       ConnectionStrings__DefaultConnection: Host=postgres-db;Port=5432;Database=chatapp;Username=chatapp;Password=chatapp
-
       # RabbitMQ
       RabbitMQ__Host: rabbitmq
-
-      # JWT (Options Pattern lê via IConfiguration)
+      # JWT
       JWT__ValidIssuer: ChatApp
       JWT__ValidAudience: ChatApp.Api
       JWT__SecretKey: ${JWT_SECRET}
-      JWT__TokenValidityInMinutes: "30"
+      JWT__TokenValidityInMinutes: "480"
       JWT__RefreshTokenValidityInMinutes: "60"
-
     depends_on:
       postgres-db:
         condition: service_healthy
       rabbitmq:
-        condition: service_started
+        condition: service_healthy
+
+  frontend-app:
+    build:
+      context: ./frontend/ChatAppFront
+      dockerfile: Dockerfile
+    container_name: chat-frontend
+    ports:
+      - "5173:80" # Acessar no navegador via localhost: 5171
+    depends_on:
+      - backend-api
 
 volumes:
   pgdata:

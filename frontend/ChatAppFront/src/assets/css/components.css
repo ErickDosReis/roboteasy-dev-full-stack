@@ -1,0 +1,37 @@
+/* Botão Padrão (Verde) */
+.btn-primary {
+  background-color: var(--primary-color);
+  color: var(--text-inverse);
+  border: none;
+  border-radius: 4px; /* Ou arredondado dependendo do gosto */
+  padding: 10px 16px;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    transform 0.1s;
+  font-weight: 500;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+
+.btn-primary:disabled {
+  background-color: #a0dcb6;
+  cursor: default;
+}
+
+/* Inputs arredondados (Estilo Chat) */
+.input-rounded {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius-input);
+  background: #f9f9f9;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.input-rounded:focus {
+  border-color: var(--primary-color);
+  background: #fff;
+}

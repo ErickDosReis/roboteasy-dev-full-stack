@@ -1,0 +1,24 @@
+:root {
+  /* Paleta de Cores (SaaS Clean Theme) */
+  --primary-color: #42b983;
+  --primary-hover: #3aa876;
+  --bg-app: #f0f2f5;
+  --bg-card: #ffffff;
+
+  /* Textos */
+  --text-primary: #2c3e50;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --text-inverse: #ffffff;
+
+  /* Mensagens */
+  --msg-sent: var(--primary-color);
+  --msg-received: #f0f2f5;
+
+  /* Bordas e Sombras */
+  --border-radius-card: 12px;
+  --border-radius-bubble: 18px;
+  --border-radius-input: 24px;
+  --shadow-card: 0 4px 15px rgba(0, 0, 0, 0.08);
+  --border-light: #eaeaea;
+}
