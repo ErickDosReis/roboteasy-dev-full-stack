@@ -193,10 +193,9 @@ app.Use(async (context, next) =>
     }
     catch (Exception ex)
     {
-        // Isso vai garantir que o erro apareça na janela de Saída do VS
         var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "🔥 ERRO FATAL CAPTURADO NO MIDDLEWARE 🔥");
-        throw; // Relança o erro para o navegador receber o 500
+        logger.LogError(ex, "ERRO CAPTURADO NO MIDDLEWARE");
+        throw;
     }
 });
 

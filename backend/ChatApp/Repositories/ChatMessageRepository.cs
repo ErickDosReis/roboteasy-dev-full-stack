@@ -28,11 +28,10 @@ namespace ChatApp.Repositories
 
         public async Task<IEnumerable<ChatMessage>> GetConversationAsync(string userA, string userB, CancellationToken ct)
         {
-            // A lógica é: Pegar mensagens onde (De Mim Para Ele) OU (Dele Para Mim)
             return await _db.ChatMessages
                 .Where(m => (m.FromUserId == userA && m.ToUserId == userB) ||
                             (m.FromUserId == userB && m.ToUserId == userA))
-                .OrderBy(m => m.SentAtUtc) // Importante: Ordem cronológica
+                .OrderBy(m => m.SentAtUtc)
                 .ToListAsync(ct);
         }
     }

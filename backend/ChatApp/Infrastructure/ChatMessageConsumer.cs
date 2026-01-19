@@ -22,11 +22,9 @@ public sealed class ChatMessageConsumer(IOptions<RabbitMqOptions> options,
 
     private async Task EnsureConnectedAsync(CancellationToken ct)
     {
-        // já conectado
         if (_conn is { IsOpen: true } && _ch is { IsOpen: true })
             return;
 
-        // limpa qualquer coisa quebrada
         try { _ch?.Dispose(); } catch { }
         try { _conn?.Dispose(); } catch { }
         _ch = null;
@@ -62,8 +60,7 @@ public sealed class ChatMessageConsumer(IOptions<RabbitMqOptions> options,
             {
                 _logger.LogWarning(ex, "Falha ao conectar no RabbitMQ. Tentando novamente em {Delay}s...", delay.TotalSeconds);
                 await Task.Delay(delay, ct);
-
-                // backoff simples até 10s
+                
                 delay = TimeSpan.FromSeconds(Math.Min(delay.TotalSeconds * 2, 10));
             }
         }
@@ -126,8 +123,7 @@ public sealed class ChatMessageConsumer(IOptions<RabbitMqOptions> options,
             try
             {
                 _ch.BasicConsume(queue: _opt.Queue, autoAck: false, consumer: consumer);
-
-                // Mantém este ciclo “vivo” enquanto a conexão estiver aberta.
+                
                 while (!stoppingToken.IsCancellationRequested && _conn is { IsOpen: true } && _ch is { IsOpen: true })
                 {
                     await Task.Delay(1000, stoppingToken);
