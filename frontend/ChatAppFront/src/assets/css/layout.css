@@ -1,0 +1,39 @@
+/* Container que centraliza tudo na tela */
+.app-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: var(--bg-app);
+  padding-bottom: 5vh; /* O offset visual para cima */
+  box-sizing: border-box;
+}
+
+/* O Card branco central */
+.app-card {
+  background-color: var(--bg-card);
+  width: 100%;
+  border-radius: var(--border-radius-card);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* Responsividade básica */
+  max-width: 90%;
+}
+
+/* Modificadores de tamanho */
+.app-card.size-sm {
+  max-width: 400px;
+  height: auto;
+} /* Login/Register */
+.app-card.size-md {
+  max-width: 600px;
+  height: 80vh;
+} /* Users */
+.app-card.size-lg {
+  max-width: 800px;
+  height: 85vh;
+} /* Chat */
