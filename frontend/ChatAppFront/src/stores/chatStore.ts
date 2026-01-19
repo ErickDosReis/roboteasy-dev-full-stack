@@ -106,7 +106,6 @@ export const useChatStore = defineStore('chat', () => {
     signalRService.onReceiveMessage((dto: ReceivedMessageDto) => {
       const isMine = dto.fromUserId === currentUser.value?.userId
       const chatPartnerId = isMine ? activeChatUserId.value! : dto.fromUserId
-      console.log('onReceiveMessage', dto)
       const newMessage: ChatMessage = {
         id: crypto.randomUUID(),
         senderId: dto.fromUserId,
