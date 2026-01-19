@@ -26,16 +26,18 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSignalR();
-builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection("RabbitMq"));
-
+builder.Services.AddSignalR(options =>{options.EnableDetailedErrors = true;});
+builder.Services.AddOptions<RabbitMqOptions>()
+    .Bind(builder.Configuration.GetSection("RabbitMQ"))
+    .Validate(config => !string.IsNullOrWhiteSpace(config.Host), "RabbitMQ:Host não pode ser nulo ou vazio.")
+    .ValidateOnStart();
 
 //DI
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IChatMessageService, ChatMessageService>();
 builder.Services.AddSingleton<IUserIdProvider, UserIdProviderService>();
 builder.Services.AddSingleton<IMessagePublisherService, MessagePublisherService>();
-builder.Services.AddSingleton<IUserPresenceTrackerService, UserPresenceTrackerService>();
+builder.Services.AddSingleton<IUserService, UserService>();
 
 builder.Services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
 
@@ -96,7 +98,9 @@ builder.Services.AddCors(options =>
     {
         policy
             .WithOrigins(
-                "http://localhost:8080"
+                "http://localhost:8080",
+                "http://localhost:5173",
+                "http://localhost:5173"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
@@ -173,21 +177,28 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 
-using (var scope = app.Services.CreateScope())//Vou adicionar um migrate automático para facilitar os testes
+using (var scope = app.Services.CreateScope())// migrate automático para facilitar os testes
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 }
 
-if (app.Environment.IsDevelopment())
+app.Use(async (context, next) =>
 {
-    app.Use(async (context, next) =>
+    try
     {
         var auth = context.Request.Headers.Authorization.ToString();
         app.Logger.LogInformation("Authorization header raw: '{Auth}'", auth);
         await next();
-    });
-}
+    }
+    catch (Exception ex)
+    {
+        // Isso vai garantir que o erro apareça na janela de Saída do VS
+        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "🔥 ERRO FATAL CAPTURADO NO MIDDLEWARE 🔥");
+        throw; // Relança o erro para o navegador receber o 500
+    }
+});
 
 
 app.UseCors(allowedOrigins);

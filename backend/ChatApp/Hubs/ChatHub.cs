@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.SignalR;
 namespace ChatApp.Hubs;
 
 [Authorize]
-public class ChatHub(IUserPresenceTrackerService presenceTracker,
+public class ChatHub(IUserService presenceTracker,
                      IMessagePublisherService chatPublisher) : Hub
 {
-    private readonly IUserPresenceTrackerService _presenceTracker = presenceTracker;
+    private readonly IUserService _presenceTracker = presenceTracker;
     private readonly IMessagePublisherService _chatPublisher = chatPublisher;
 
     public override async Task OnConnectedAsync()

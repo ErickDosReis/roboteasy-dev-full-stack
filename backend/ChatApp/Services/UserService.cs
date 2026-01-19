@@ -4,7 +4,7 @@ using ChatApp.Interfaces;
 
 namespace ChatApp.Services
 {
-    public sealed class UserPresenceTrackerService : IUserPresenceTrackerService
+    public sealed class UserService : IUserService
     {
         private sealed class UserConnections
         {
