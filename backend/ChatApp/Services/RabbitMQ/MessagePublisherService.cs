@@ -64,8 +64,8 @@ namespace ChatApp.Services.RabbitMQ
 
         public void Dispose()
         {
-            try { _ch?.Close(); } catch { /* ignore */ }
-            try { _conn?.Close(); } catch { /* ignore */ }
+            try { _ch?.Close(); } catch { }
+            try { _conn?.Close(); } catch { }
         }
     }
 }
